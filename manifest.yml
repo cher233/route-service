@@ -1,0 +1,9 @@
+---
+applications:
+- name: route-service
+  memory: 1G
+  disk: 1G
+  timeout: 180
+  instances: 1
+  path: target/route-service-1.0.0.SNAPSHOT.jar
+  buildpack: https://github.com/cloudfoundry/java-buildpack.git
