@@ -44,7 +44,7 @@ public class PersistenceService {
     @Autowired
     private AdditionalInfoRepository additionalInfoRepository;
 
-    public void InsertIntoDB(Route routeToInsert, int filerterId, Map<String,String> problemList, RequestEntity<?> requestEntity){}
+    public void InsertIntoDB(Route routeToInsert, int filerterId, List<String> problemList, RequestEntity<?> requestEntity){}
 
     public List<FilterFindings> getAllProblemsForRoute(String route){
         return null;

@@ -22,6 +22,7 @@ import org.cher.entities.Route;*/
 import org.routeservice.controller.RouteServiceController;
 import org.routeservice.entity.FilterToRoute;
 import org.routeservice.entity.Route;
+import org.routeservice.factory.FilterFactory;
 import org.routeservice.filter.Filter;
 import org.routeservice.repository.FilterToRouteRepository;
 import org.routeservice.repository.RouteRepository;
@@ -52,8 +53,7 @@ public class CreateAndRunFilterService {
 
         Route routeToRun = extractRoute(request.getHeaders());
         List<Integer> filterIndexList = checkForFilters(routeToRun);
-        //TODO use Filterfactory and get filter list
-        List<Filter> filterList = null;
+        List<Filter> filterList = FilterFactory.CreateFilters(filterIndexList);
         runFilter(filterList, request, routeToRun);
         return request;
     }

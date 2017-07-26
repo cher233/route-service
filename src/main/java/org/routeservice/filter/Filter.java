@@ -24,7 +24,7 @@ import org.routeservice.service.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.RequestEntity;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * Created by Cher on 13/07/2017.
@@ -33,6 +33,7 @@ import java.util.Map;
 public abstract class Filter implements Runnable{
 
     @Autowired
+    @Setter
     private  PersistenceService service;
 
     @Getter
@@ -44,21 +45,25 @@ public abstract class Filter implements Runnable{
     @Setter
     private Route route;
 
+    public Filter(int id){
+        filterId = id;
+    }
+
  /*   public void ActivateFilter(RequestEntity<?> request, Route route) {
         Map<String,String> problemsList =  CheckVulnerability(request);
         if(problemsList == null) {return ;}
         service.InsertIntoDB(route,filterId,problemsList,request);
     }
 */
-    public abstract Map<String,String> CheckVulnerability(RequestEntity<?> request);
+    public abstract List<String> CheckVulnerability(RequestEntity<?> request);
 
     @Override
     public final void run() {
         try {
             RequestEntity<?> request = requestEntity;
             Route routeToCheck = route;
-            Map<String,String> problemsList =  CheckVulnerability(request);
-            if(problemsList == null) {return ;}
+            List<String> problemsList =  CheckVulnerability(request);
+            if(problemsList.isEmpty()) {return ;}
             Thread.sleep(5000);
             service.InsertIntoDB(routeToCheck,filterId,problemsList,request);
         }

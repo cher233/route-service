@@ -16,20 +16,35 @@
 
 package org.routeservice.filter;
 
-import org.routeservice.entity.Route;
-import org.routeservice.service.PersistenceService;
+import org.routeservice.controller.RouteServiceController;
 import org.springframework.http.RequestEntity;
 
-import java.util.Map;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DirecoryTraversalFilter extends Filter {
 
-    public DirecoryTraversalFilter(PersistenceService service, int filterId, RequestEntity<?> requestEntity, Route route) {
-        super(service, filterId, requestEntity, route);
+    public DirecoryTraversalFilter(int filterId) {
+        super(filterId);
     }
 
     @Override
-    public Map<String, String> CheckVulnerability(RequestEntity<?> request) {
-        return null;
+    public List<String> CheckVulnerability(RequestEntity<?> request) {
+        List<String> vulnerabilities = new ArrayList<>();
+        String url = request.getHeaders().get(RouteServiceController.FORWARDED_URL).get(0);
+        url = url.replaceAll("%2e",".").replaceAll("%2f","/");
+        try {
+            URI uri  = new URI(url);
+            URI uriToComapre = uri.normalize();
+            if(!uri.equals(uriToComapre)){
+                vulnerabilities.add(url);
+            }
+        } catch (URISyntaxException e) {
+            //TODO PRINT LOG
+        }
+        return vulnerabilities;
     }
 }
