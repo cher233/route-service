@@ -19,11 +19,16 @@ package org.routeservice.filter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.routeservice.controller.RouteServiceController;
 import org.routeservice.entity.Route;
 import org.routeservice.service.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
 
+import javax.validation.constraints.Null;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 /**
@@ -65,10 +70,21 @@ public abstract class Filter implements Runnable{
             List<String> problemsList =  CheckVulnerability(request);
             if(problemsList.isEmpty()) {return ;}
             Thread.sleep(5000);
-            service.InsertIntoDB(routeToCheck,filterId,problemsList,request);
+            service.InsertIntoDB(routeToCheck,filterId,problemsList,request,getFullUri(request.getHeaders()));
         }
         catch (Exception e) {
             //TODO write log...
         }
+    }
+
+    public static URI getFullUri(HttpHeaders httpHeaders){
+        URI uri = null;
+        String url = httpHeaders.get(RouteServiceController.FORWARDED_URL).get(0);
+        try {
+            uri  = new URI(url);
+            } catch (URISyntaxException e1) {
+            //TODO print log
+        }
+        return uri;
     }
 }

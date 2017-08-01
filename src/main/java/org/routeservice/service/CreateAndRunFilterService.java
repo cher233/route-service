@@ -59,13 +59,16 @@ public class CreateAndRunFilterService {
     }
 
     private Route extractRoute(HttpHeaders headers) {
-        URI uri = headers.remove(RouteServiceController.FORWARDED_URL).stream()
-            .findFirst()
-            .map(URI::create)
-            .orElseThrow(() -> new IllegalStateException(String.format("No %s header present", RouteServiceController.FORWARDED_URL)));
+        URI uri = Filter.getFullUri(headers);
         String host = uri.getHost();
         String protocol = uri.getScheme();
-        String routeName = new StringBuilder().append(protocol).append(host).toString();
+        String routeName;
+        if(protocol==null){
+            routeName=host;
+        }
+        else{
+            routeName = new StringBuilder().append(protocol).append("://").append(host).toString();
+        }
         Route routeToCheck = routeRepository.findDistinctFirstByRouteName(routeName);
         if(routeToCheck == null) {
           throw new IllegalStateException(String.format("unregisters route", routeName));

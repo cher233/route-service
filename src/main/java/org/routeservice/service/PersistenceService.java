@@ -16,15 +16,18 @@
 
 package org.routeservice.service;
 
-import org.routeservice.entity.FilterFindings;
-import org.routeservice.entity.Route;
+import org.routeservice.entity.*;
 import org.routeservice.repository.AdditionalInfoRepository;
 import org.routeservice.repository.FilterFindingsRepository;
+import org.routeservice.repository.FilterRepository;
 import org.routeservice.repository.ProblemDescriptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -38,13 +41,59 @@ public class PersistenceService {
     @Autowired
     private FilterFindingsRepository filterFindingsRepository;
 
-    @Autowired
-    private ProblemDescriptionRepository problemDescriptionRepository;
+/*    @Autowired
+    private ProblemDescriptionRepository problemDescriptionRepository;*/
 
     @Autowired
     private AdditionalInfoRepository additionalInfoRepository;
 
-    public void InsertIntoDB(Route routeToInsert, int filerterId, List<String> problemList, RequestEntity<?> requestEntity){}
+    @Autowired
+    private FilterRepository filterRepository;
+
+    public void InsertIntoDB(Route routeToInsert, int filerId, List<String> problemList, RequestEntity<?> requestEntity, URI fullUri){
+        AdditionalInfo additionalInfo = createAdditionalInfo(requestEntity,fullUri);
+        if(additionalInfoRepository.save(additionalInfo)!=null){
+            List<FilterFindings> filterFindingsList = new ArrayList<>();
+            for(String problem: problemList){
+                filterFindingsList.add(createFilterFindings(routeToInsert,additionalInfo,createProblemDescription(filerId, problem)));
+            }
+            filterFindingsRepository.save(filterFindingsList);
+        }
+    }
+
+        private FilterFindings createFilterFindings(Route routeToInsert, AdditionalInfo additionalInfo,
+                                                    ProblemDescription problemDescription) {
+        FilterFindings filterFindings = FilterFindings.builder().
+                additionalInfo(additionalInfo).
+                route(routeToInsert).
+                problemDescription(problemDescription).
+                fixed(false).
+                build();
+        return filterFindings;
+    }
+
+    private ProblemDescription createProblemDescription(int filterId, String problem) {
+        ProblemDescription problemDescription=null;
+        FilterEntity filter = filterRepository.getOne(filterId);
+            problemDescription = ProblemDescription.builder().
+                    filterEntity(filter).
+                    description(problem).
+                    build();
+        return problemDescription;
+    }
+
+    private AdditionalInfo createAdditionalInfo(RequestEntity<?> requestEntity, URI fullUri) {
+        long timeOfRequest = requestEntity.getHeaders().getDate();
+        String SourceIp = requestEntity.getHeaders().getOrigin();
+        String Uri = fullUri.toString();
+        AdditionalInfo additionalInfoEntity = AdditionalInfo.builder().
+                destinationUrl(Uri).
+                sourceUrl(SourceIp).
+                timeOfProblem(timeOfRequest).
+                build();
+        return additionalInfoEntity;
+
+    }
 
     public List<FilterFindings> getAllProblemsForRoute(String route){
         return null;

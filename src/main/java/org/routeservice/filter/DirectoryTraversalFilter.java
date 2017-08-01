@@ -25,9 +25,9 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DirecoryTraversalFilter extends Filter {
+public class DirectoryTraversalFilter extends Filter {
 
-    public DirecoryTraversalFilter(int filterId) {
+    public DirectoryTraversalFilter(int filterId) {
         super(filterId);
     }
 

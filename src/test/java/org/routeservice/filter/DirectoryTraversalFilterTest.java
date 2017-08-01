@@ -26,17 +26,17 @@ import java.util.List;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-public class DirecoryTraversalFilterTest {
+public class DirectoryTraversalFilterTest {
 
-    Filter filter;
+    private Filter filter;
 
-    RequestEntity<?> requestEntity;
+    private RequestEntity<?> requestEntity;
 
-    List<String> list;
+    private List<String> list;
 
     @Before
     public void init(){
-        filter = new DirecoryTraversalFilter(1);
+        filter = new DirectoryTraversalFilter(1);
         filter.setService(mock(PersistenceService.class));
         requestEntity = mock(RequestEntity.class);
         HttpHeaders headers = mock(HttpHeaders.class);

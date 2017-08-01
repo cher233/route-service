@@ -16,9 +16,9 @@
 
 package org.routeservice.factory;
 
-import org.routeservice.filter.DirecoryTraversalFilter;
+import org.routeservice.filter.AuthenticationBypassFilter;
+import org.routeservice.filter.DirectoryTraversalFilter;
 import org.routeservice.filter.Filter;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +43,9 @@ public final class FilterFactory {
         switch (filterId)
         {
             case 1:
-                filter = new DirecoryTraversalFilter(1);
+                filter = new DirectoryTraversalFilter(1);
+            case 2:
+                filter = new AuthenticationBypassFilter(2);
         }
         return filter;
     }

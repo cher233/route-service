@@ -60,5 +60,5 @@ public class AdditionalInfo {
 
     @NonNull
     @Column(name = "time_of_problem", nullable = false ,length = 225)
-    private Date timeOfProblem;
+    private long timeOfProblem;
 }
