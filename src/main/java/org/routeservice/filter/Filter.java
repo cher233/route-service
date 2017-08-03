@@ -70,7 +70,9 @@ public abstract class Filter implements Runnable{
             List<String> problemsList =  CheckVulnerability(request);
             if(problemsList.isEmpty()) {return ;}
             Thread.sleep(5000);
-            service.InsertIntoDB(routeToCheck,filterId,problemsList,request,getFullUri(request.getHeaders()));
+            long date = request.getHeaders().getDate();
+            String origin = request.getHeaders().getOrigin();
+            service.InsertIntoDB(routeToCheck,filterId,problemsList,date,getFullUri(request.getHeaders()),origin);
         }
         catch (Exception e) {
             //TODO write log...

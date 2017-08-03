@@ -41,8 +41,8 @@ public class PersistenceService {
     @Autowired
     private FilterFindingsRepository filterFindingsRepository;
 
-/*    @Autowired
-    private ProblemDescriptionRepository problemDescriptionRepository;*/
+    @Autowired
+    private ProblemDescriptionRepository problemDescriptionRepository;
 
     @Autowired
     private AdditionalInfoRepository additionalInfoRepository;
@@ -50,8 +50,9 @@ public class PersistenceService {
     @Autowired
     private FilterRepository filterRepository;
 
-    public void InsertIntoDB(Route routeToInsert, int filerId, List<String> problemList, RequestEntity<?> requestEntity, URI fullUri){
-        AdditionalInfo additionalInfo = createAdditionalInfo(requestEntity,fullUri);
+    public void InsertIntoDB(Route routeToInsert, int filerId, List<String> problemList, long dateOfrequest,
+                             URI fullUri,String originIp){
+        AdditionalInfo additionalInfo = createAdditionalInfo(dateOfrequest, originIp,fullUri);
         if(additionalInfoRepository.save(additionalInfo)!=null){
             List<FilterFindings> filterFindingsList = new ArrayList<>();
             for(String problem: problemList){
@@ -79,12 +80,13 @@ public class PersistenceService {
                     filterEntity(filter).
                     description(problem).
                     build();
+        problemDescriptionRepository.save(problemDescription);
         return problemDescription;
     }
 
-    private AdditionalInfo createAdditionalInfo(RequestEntity<?> requestEntity, URI fullUri) {
-        long timeOfRequest = requestEntity.getHeaders().getDate();
-        String SourceIp = requestEntity.getHeaders().getOrigin();
+    private AdditionalInfo createAdditionalInfo(long date, String originIp, URI fullUri) {
+        Date timeOfRequest = new Date(date*1000);
+        String SourceIp = originIp;
         String Uri = fullUri.toString();
         AdditionalInfo additionalInfoEntity = AdditionalInfo.builder().
                 destinationUrl(Uri).
@@ -92,7 +94,6 @@ public class PersistenceService {
                 timeOfProblem(timeOfRequest).
                 build();
         return additionalInfoEntity;
-
     }
 
     public List<FilterFindings> getAllProblemsForRoute(String route){

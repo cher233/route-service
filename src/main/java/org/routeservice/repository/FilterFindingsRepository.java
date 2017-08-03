@@ -20,10 +20,13 @@ import org.routeservice.entity.FilterFindings;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Created by Cher on 13/07/2017.
  */
 @Repository
 public interface FilterFindingsRepository extends JpaRepository<FilterFindings, Integer> {
 
+    List<FilterFindings> findByRoute_RouteName(String name);
 }

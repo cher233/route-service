@@ -19,6 +19,8 @@ package org.routeservice.service;
 /*import org.cher.entities.FilterEntity;
 import org.cher.entities.FilterToRoute;
 import org.cher.entities.Route;*/
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.routeservice.controller.RouteServiceController;
 import org.routeservice.entity.FilterToRoute;
 import org.routeservice.entity.Route;
@@ -27,6 +29,7 @@ import org.routeservice.filter.Filter;
 import org.routeservice.repository.FilterToRouteRepository;
 import org.routeservice.repository.RouteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Service;
@@ -41,6 +44,7 @@ import java.util.concurrent.Executors;
  */
 
 @Service
+@Slf4j
 public class CreateAndRunFilterService {
 
     @Autowired
@@ -48,6 +52,10 @@ public class CreateAndRunFilterService {
 
     @Autowired
     private FilterToRouteRepository filterToRouteRepository;
+
+    @Value("${threads}")
+    @Setter
+    private int numberOfThreads;
 
     public RequestEntity<?> CreateAndRunFilters(RequestEntity<?> request) {
 

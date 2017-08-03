@@ -25,5 +25,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface AdditionalInfoRepository extends JpaRepository<AdditionalInfo, Integer> {
-
+    AdditionalInfo findFirstByDestinationUrl(String destination);
 }

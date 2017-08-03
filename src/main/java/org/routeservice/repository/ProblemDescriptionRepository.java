@@ -25,5 +25,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface ProblemDescriptionRepository extends JpaRepository<ProblemDescription, Integer> {
-
+    ProblemDescription findFirstByFilterEntity_FilterId(int id);
 }
