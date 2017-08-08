@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.routeservice.controller.RouteServiceController;
 import org.routeservice.service.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
@@ -32,10 +33,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
+@Component
+@Scope("prototype")
 public class DirectoryTraversalFilter extends Filter {
 
-    public DirectoryTraversalFilter(int filterId) {
-        super(filterId);
+    @Autowired
+    public DirectoryTraversalFilter() {
+        filterId = 2;
     }
 
     @Override

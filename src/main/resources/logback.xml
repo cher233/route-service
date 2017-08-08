@@ -25,15 +25,15 @@
 
     <logger name="org.routeservice.example" level="${LOGGING_LEVEL:-INFO}"/>
     <logger name="org.apache" level="ERROR"/>
-    <logger name="org.routeservice.reconfiguration" level="INFO"/>
-    <logger name="org.flywaydb" level="INFO"/>
-    <logger name="org.springframework.boot.actuate.endpoint.mvc.EndpointHandlerMapping" level="INFO"/>
-    <logger name="org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration" level="INFO"/>
-    <logger name="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping" level="INFO"/>
-    <logger name="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" level="INFO"/>
-    <logger name="org.springframework.boot.autoconfigure.security" level="INFO"/>
+    <logger name="org.routeservice.reconfiguration" level="ERROR"/>
+    <logger name="org.flywaydb" level="ERROR"/>
+    <logger name="org.springframework.boot.actuate.endpoint.mvc.EndpointHandlerMapping" level="ERROR"/>
+    <logger name="org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration" level="ERROR"/>
+    <logger name="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping" level="ERROR"/>
+    <logger name="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" level="ERROR"/>
+    <logger name="org.springframework.boot.autoconfigure.security" level="ERROR"/>
 
-    <root level="debug">
+    <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
 

@@ -24,7 +24,7 @@ public class AuthenticationBypassFilterTest {
 
     @Before
     public void init(){
-        filter = new AuthenticationBypassFilter(2);
+        filter = new AuthenticationBypassFilter();
         filter.setSleep(500);
         filter.setService(mock(PersistenceService.class));
         requestEntity = mock(RequestEntity.class);

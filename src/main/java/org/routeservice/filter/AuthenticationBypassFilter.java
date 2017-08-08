@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.routeservice.controller.RouteServiceController;
 import org.routeservice.service.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 
@@ -19,10 +20,13 @@ import java.util.regex.Pattern;
  * Created by Nofar on 01/08/2017.
  */
 @Slf4j
+@Component
+@Scope("prototype")
 public class AuthenticationBypassFilter extends Filter {
 
-    public AuthenticationBypassFilter(int filterId) {
-        super(filterId);
+    @Autowired
+    public AuthenticationBypassFilter() {
+        filterId = 1;
     }
 
     @Override

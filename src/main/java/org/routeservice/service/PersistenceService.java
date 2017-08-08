@@ -23,8 +23,8 @@ import org.routeservice.repository.FilterFindingsRepository;
 import org.routeservice.repository.FilterRepository;
 import org.routeservice.repository.ProblemDescriptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -35,7 +35,8 @@ import java.util.List;
  * Created by Cher on 13/07/2017.
  */
 
-@Component
+@Service
+@Transactional
 @Slf4j
 public class PersistenceService {
 
@@ -51,20 +52,26 @@ public class PersistenceService {
     @Autowired
     private FilterRepository filterRepository;
 
-    public void InsertIntoDB(Route routeToInsert, int filerId, List<String> problemList, long dateOfrequest,
+    public void InsertIntoDB(Route routeToInsert, int filerId, List<String> problemList, long dateOfRequest,
                              URI fullUri,String originIp){
-        AdditionalInfo additionalInfo = createAdditionalInfo(dateOfrequest, originIp,fullUri);
+        log.info("Entering Problems to DB...");
+        AdditionalInfo additionalInfo = createAdditionalInfo(dateOfRequest, originIp,fullUri);
         if(additionalInfoRepository.save(additionalInfo)!=null){
+            log.info("Saved additional info entity: {}", additionalInfo.toString());
             List<FilterFindings> filterFindingsList = new ArrayList<>();
             for(String problem: problemList){
+                log.debug("Creating Problem List");
                 filterFindingsList.add(createFilterFindings(routeToInsert,additionalInfo,createProblemDescription(filerId, problem)));
             }
+            log.debug("Started Saving...");
             filterFindingsRepository.save(filterFindingsList);
+            log.info("Saved: {} To DB",filterFindingsList.toString());
         }
     }
 
         private FilterFindings createFilterFindings(Route routeToInsert, AdditionalInfo additionalInfo,
                                                     ProblemDescription problemDescription) {
+        log.debug("Creating filter findings entity.");
         FilterFindings filterFindings = FilterFindings.builder().
                 additionalInfo(additionalInfo).
                 route(routeToInsert).
@@ -75,17 +82,21 @@ public class PersistenceService {
     }
 
     private ProblemDescription createProblemDescription(int filterId, String problem) {
-        ProblemDescription problemDescription=null;
+        log.debug("Creating Problem description entity.");
+        ProblemDescription problemDescription;
         FilterEntity filter = filterRepository.getOne(filterId);
-            problemDescription = ProblemDescription.builder().
-                    filterEntity(filter).
-                    description(problem).
-                    build();
+        problemDescription = ProblemDescription.builder().
+                filterEntity(filter).
+                description(problem).
+                build();
+        log.debug("Saving problem description entity...");
         problemDescriptionRepository.save(problemDescription);
+        log.info("Saved problem description entity: {}",problemDescription.toString());
         return problemDescription;
     }
 
     private AdditionalInfo createAdditionalInfo(long date, String originIp, URI fullUri) {
+        log.debug("Creating additional information entity.");
         Date timeOfRequest;
         if(date != -1) {
             timeOfRequest = new Date(date * 1000);

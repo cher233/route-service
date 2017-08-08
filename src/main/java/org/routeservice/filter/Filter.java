@@ -44,6 +44,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Slf4j
+@Service
 public abstract class Filter implements Runnable{
 
     @Setter
@@ -51,8 +52,7 @@ public abstract class Filter implements Runnable{
     private  PersistenceService service;
 
     @Getter
-    @Setter
-    private int filterId;
+    protected int filterId;
 
     @Setter
     private RequestEntity<?> requestEntity;

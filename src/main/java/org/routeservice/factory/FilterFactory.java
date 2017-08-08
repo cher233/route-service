@@ -42,9 +42,9 @@ public final class FilterFactory {
         switch (filterId)
         {
             case 1:
-                return new DirectoryTraversalFilter(1);
+                return new DirectoryTraversalFilter();
             case 2:
-                return new AuthenticationBypassFilter(2);
+                return new AuthenticationBypassFilter();
         }
         return null;
     }

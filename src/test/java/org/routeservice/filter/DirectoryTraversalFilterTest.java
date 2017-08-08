@@ -36,7 +36,7 @@ public class DirectoryTraversalFilterTest {
 
     @Before
     public void init(){
-        filter = new DirectoryTraversalFilter(1);
+        filter = new DirectoryTraversalFilter();
         filter.setSleep(500);
         filter.setService(mock(PersistenceService.class));
         requestEntity = mock(RequestEntity.class);

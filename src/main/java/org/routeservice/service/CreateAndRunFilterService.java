@@ -34,6 +34,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Service;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -45,6 +46,9 @@ import java.util.concurrent.Executors;
 @Service
 @Slf4j
 public class CreateAndRunFilterService {
+
+    @Autowired
+    List<Filter> filterList;
 
     @Autowired
     private RouteRepository routeRepository;
@@ -65,10 +69,10 @@ public class CreateAndRunFilterService {
         log.info("Searching for route...");
         Route routeToRun = extractRoute(request.getHeaders());
         log.info("Extracting filters from DB...");
-        List<Integer> filterIndexList = checkForFilters(routeToRun);
-        List<Filter> filterList = FilterFactory.CreateFilters(filterIndexList);
+        HashSet<Integer> filterIndexList = checkForFilters(routeToRun);
+        //List<Filter> filterList = FilterFactory.CreateFilters(filterIndexList);
         log.info("Activating filters...");
-        runFilter(filterList, request, routeToRun);
+        runFilter(filterIndexList, request, routeToRun);
         log.info("Finished validating request.");
         return request;
     }
@@ -93,12 +97,13 @@ public class CreateAndRunFilterService {
         return routeToCheck;
     }
 
-    private List<Integer> checkForFilters(Route routeToCheck) {
-        List<Integer> filtersPerRoute = new ArrayList<>();
+    private HashSet<Integer> checkForFilters(Route routeToCheck) {
+        HashSet<Integer> filtersPerRoute = new HashSet<>();
         log.debug("Searching filters in DB...");
         List<FilterToRoute> filterToRouteList = filterToRouteRepository.findAllByRoute_RouteId(routeToCheck.getRouteId());
         if(filterToRouteList != null) {
             for (FilterToRoute filter : filterToRouteList) {
+                log.info("Selected filter:{} for route:{}",filter.getFilter().getFilerName(),routeToCheck.getRouteName());
                 filtersPerRoute.add(filter.getFilter().getFilterId());
             }
         }
@@ -106,14 +111,16 @@ public class CreateAndRunFilterService {
         return filtersPerRoute;
     }
 
-    private void runFilter(List<Filter> filterList, RequestEntity<?> request, Route route) {
+    private void runFilter(HashSet<Integer> filterIdList, RequestEntity<?> request, Route route) {
         ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
         log.debug("Running Filters...");
         for(Filter filter: filterList){
-            filter.setRoute(route);
-            filter.setRequestEntity(request);
-            //executor.execute(filter);
-            filter.run();
+            if(filterIdList.contains(filter.getFilterId())) {
+                filter.setRoute(route);
+                filter.setRequestEntity(request);
+                //executor.execute(filter);
+                filter.run();
+            }
         }
         executor.shutdown();
 /*        while (!executor.isTerminated()) {
