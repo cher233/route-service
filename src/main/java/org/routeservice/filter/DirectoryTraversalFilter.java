@@ -16,8 +16,14 @@
 
 package org.routeservice.filter;
 
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.routeservice.controller.RouteServiceController;
+import org.routeservice.service.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
+import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -25,6 +31,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class DirectoryTraversalFilter extends Filter {
 
     public DirectoryTraversalFilter(int filterId) {
@@ -33,18 +40,26 @@ public class DirectoryTraversalFilter extends Filter {
 
     @Override
     public List<String> CheckVulnerability(RequestEntity<?> request) {
+        log.debug("Started checking directory traversal.");
         List<String> vulnerabilities = new ArrayList<>();
-        String url = request.getHeaders().get(RouteServiceController.FORWARDED_URL).get(0);
-        url = url.replaceAll("%2e",".").replaceAll("%2f","/");
-        try {
-            URI uri  = new URI(url);
-            URI uriToComapre = uri.normalize();
-            if(!uri.equals(uriToComapre)){
-                vulnerabilities.add(url);
-            }
-        } catch (URISyntaxException e) {
-            //TODO PRINT LOG
+        URI uri = decodeUrl(request.getHeaders());
+        URI uriToCompare = uri.normalize();
+        if (!uri.equals(uriToCompare)) {
+            log.info("Found directory traversal.");
+            vulnerabilities.add(uri.toString());
         }
-        return vulnerabilities;
-    }
+            log.debug("Finished checking directory traversal.");
+            return vulnerabilities;
+        }
+
+    private URI decodeUrl(HttpHeaders httpHeaders){
+        URI uri = Filter.getFullUri(httpHeaders);
+        URI decodedUri = null;
+        String url = uri.getSchemeSpecificPart().replaceAll("^//","").replaceAll(" ","");
+        try { decodedUri = new URI(url); }
+        catch (URISyntaxException e) {log.error("Invalid Uri: {}",e.getReason()); }
+        return decodedUri;
+        }
 }
+
+

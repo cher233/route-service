@@ -18,13 +18,20 @@ package org.routeservice.filter;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.service.spi.InjectService;
 import org.routeservice.controller.RouteServiceController;
 import org.routeservice.entity.Route;
 import org.routeservice.service.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.Null;
 import java.net.URI;
@@ -35,13 +42,16 @@ import java.util.List;
  * Created by Cher on 13/07/2017.
  */
 @AllArgsConstructor
+@NoArgsConstructor
+@Slf4j
 public abstract class Filter implements Runnable{
 
-    @Autowired
     @Setter
+    @Autowired
     private  PersistenceService service;
 
     @Getter
+    @Setter
     private int filterId;
 
     @Setter
@@ -50,34 +60,33 @@ public abstract class Filter implements Runnable{
     @Setter
     private Route route;
 
+    @Value("${sleepFilter}")
+    @Setter
+    private int sleep;
+
     public Filter(int id){
         filterId = id;
     }
 
- /*   public void ActivateFilter(RequestEntity<?> request, Route route) {
-        Map<String,String> problemsList =  CheckVulnerability(request);
-        if(problemsList == null) {return ;}
-        service.InsertIntoDB(route,filterId,problemsList,request);
-    }
-*/
     public abstract List<String> CheckVulnerability(RequestEntity<?> request);
 
     @Override
     public final void run() {
-        try {
+            log.debug("filter Started running...");
             RequestEntity<?> request = requestEntity;
             Route routeToCheck = route;
             List<String> problemsList =  CheckVulnerability(request);
-            if(problemsList.isEmpty()) {return ;}
-            Thread.sleep(5000);
+            if(problemsList.isEmpty()) {
+                log.info("no vulnerability found.");
+                return ;
+            }
             long date = request.getHeaders().getDate();
             String origin = request.getHeaders().getOrigin();
-            service.InsertIntoDB(routeToCheck,filterId,problemsList,date,getFullUri(request.getHeaders()),origin);
+            URI fullURI = getFullUri(request.getHeaders());
+            //service = new PersistenceService();
+            service.InsertIntoDB(routeToCheck,filterId,problemsList,date,fullURI,origin);
+            log.debug("Filter finished running.");
         }
-        catch (Exception e) {
-            //TODO write log...
-        }
-    }
 
     public static URI getFullUri(HttpHeaders httpHeaders){
         URI uri = null;

@@ -58,6 +58,6 @@ public class ProblemDescription {
     @JoinColumn(name = "filter_id")
     private FilterEntity filterEntity;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, length = 2147483647)
     private String description;
 }

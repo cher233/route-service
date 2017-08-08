@@ -39,15 +39,14 @@ public final class FilterFactory {
     }
 
     private static Filter generateFilter(int filterId){
-        Filter filter = null;
         switch (filterId)
         {
             case 1:
-                filter = new DirectoryTraversalFilter(1);
+                return new DirectoryTraversalFilter(1);
             case 2:
-                filter = new AuthenticationBypassFilter(2);
+                return new AuthenticationBypassFilter(2);
         }
-        return filter;
+        return null;
     }
 
 }

@@ -89,7 +89,7 @@ public class PersistenceServiceIT {
     }
 
     private void insert() throws URISyntaxException {
-        Route route = routeRepository.findDistinctFirstByRouteName("https://sdfdsf.com");
+        Route route = routeRepository.findFirstByRouteName("https://sdfdsf.com");
         List<String> problemList = new ArrayList<>();
         problemList.add("problem");
         problemList.add("problem2");

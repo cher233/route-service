@@ -19,7 +19,7 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%-5level %msg%n</pattern>
+            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
         </encoder>
     </appender>
 
@@ -33,7 +33,7 @@
     <logger name="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" level="INFO"/>
     <logger name="org.springframework.boot.autoconfigure.security" level="INFO"/>
 
-    <root level="WARN">
+    <root level="debug">
         <appender-ref ref="STDOUT"/>
     </root>
 

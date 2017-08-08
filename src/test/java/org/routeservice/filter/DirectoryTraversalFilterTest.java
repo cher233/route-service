@@ -37,12 +37,21 @@ public class DirectoryTraversalFilterTest {
     @Before
     public void init(){
         filter = new DirectoryTraversalFilter(1);
+        filter.setSleep(500);
         filter.setService(mock(PersistenceService.class));
         requestEntity = mock(RequestEntity.class);
         HttpHeaders headers = mock(HttpHeaders.class);
         list = mock(List.class);
         when(requestEntity.getHeaders()).thenReturn(headers);
         when(headers.get(any())).thenReturn(list);
+    }
+
+
+    @Test
+    public void checkVulnerabilityWithoutProblem() throws Exception {
+        when(list.get(0)).thenReturn("https://www.bla.com/b");
+        List<String> problems = filter.CheckVulnerability(requestEntity);
+        Assert.assertTrue(problems.isEmpty());
     }
 
     @Test
@@ -53,17 +62,17 @@ public class DirectoryTraversalFilterTest {
     }
 
     @Test
-    public void checkVulnerabilityWithAnotherProblem() throws Exception {
+    public void checkVulnerabilityProblemNumTwo() throws Exception {
         when(list.get(0)).thenReturn("https://www.bla.com/b/../b");
         List<String> problems = filter.CheckVulnerability(requestEntity);
         Assert.assertTrue(!problems.isEmpty());
     }
 
     @Test
-    public void checkVulnerabilityWithoutProblem() throws Exception {
-        when(list.get(0)).thenReturn("https://www.bla.com/b");
+    public void checkVulnerabilityProblemNumThree() throws Exception {
+        when(list.get(0)).thenReturn("https://www.bla.predix.io/b/../%20sdlfk/b");
         List<String> problems = filter.CheckVulnerability(requestEntity);
-        Assert.assertTrue(problems.isEmpty());
+        Assert.assertTrue(!problems.isEmpty());
     }
 
 }

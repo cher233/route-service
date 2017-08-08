@@ -27,6 +27,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RouteRepository extends JpaRepository<Route, Integer> {
 
-    Route findDistinctFirstByRouteName(String name);
+    Route findFirstByRouteName(String name);
 
 }

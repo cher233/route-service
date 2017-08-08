@@ -1,4 +1,6 @@
 threads: 5
+sleepGeneral: 500
+sleepFilter: 5000
 
 ---
 

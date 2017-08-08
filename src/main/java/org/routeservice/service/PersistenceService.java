@@ -16,26 +16,27 @@
 
 package org.routeservice.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.routeservice.entity.*;
 import org.routeservice.repository.AdditionalInfoRepository;
 import org.routeservice.repository.FilterFindingsRepository;
 import org.routeservice.repository.FilterRepository;
 import org.routeservice.repository.ProblemDescriptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.RequestEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Cher on 13/07/2017.
  */
 
-@Service
+@Component
+@Slf4j
 public class PersistenceService {
 
     @Autowired
@@ -85,7 +86,10 @@ public class PersistenceService {
     }
 
     private AdditionalInfo createAdditionalInfo(long date, String originIp, URI fullUri) {
-        Date timeOfRequest = new Date(date*1000);
+        Date timeOfRequest;
+        if(date != -1) {
+            timeOfRequest = new Date(date * 1000);
+        }else{ timeOfRequest = new Date(); }
         String SourceIp = originIp;
         String Uri = fullUri.toString();
         AdditionalInfo additionalInfoEntity = AdditionalInfo.builder().

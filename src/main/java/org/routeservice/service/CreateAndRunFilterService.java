@@ -21,7 +21,6 @@ import org.cher.entities.FilterToRoute;
 import org.cher.entities.Route;*/
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.routeservice.controller.RouteServiceController;
 import org.routeservice.entity.FilterToRoute;
 import org.routeservice.entity.Route;
 import org.routeservice.factory.FilterFactory;
@@ -57,59 +56,73 @@ public class CreateAndRunFilterService {
     @Setter
     private int numberOfThreads;
 
+    @Value("${sleepGeneral}")
+    @Setter
+    private int sleep;
+
     public RequestEntity<?> CreateAndRunFilters(RequestEntity<?> request) {
 
+        log.info("Searching for route...");
         Route routeToRun = extractRoute(request.getHeaders());
+        log.info("Extracting filters from DB...");
         List<Integer> filterIndexList = checkForFilters(routeToRun);
         List<Filter> filterList = FilterFactory.CreateFilters(filterIndexList);
+        log.info("Activating filters...");
         runFilter(filterList, request, routeToRun);
+        log.info("Finished validating request.");
         return request;
     }
 
     private Route extractRoute(HttpHeaders headers) {
+        log.debug("Constructing route...");
         URI uri = Filter.getFullUri(headers);
-        String host = uri.getHost();
         String protocol = uri.getScheme();
         String routeName;
         if(protocol==null){
-            routeName=host;
+            routeName=uri.toString().replaceAll("/.*","");
         }
         else{
-            routeName = new StringBuilder().append(protocol).append("://").append(host).toString();
+            routeName = new StringBuilder().append(protocol).append("://").append(uri.getHost()).toString();
         }
-        Route routeToCheck = routeRepository.findDistinctFirstByRouteName(routeName);
+        log.debug("Retrieving route from DB...");
+        Route routeToCheck = routeRepository.findFirstByRouteName(routeName);
         if(routeToCheck == null) {
-          throw new IllegalStateException(String.format("unregisters route", routeName));
+          throw new IllegalStateException(String.format("unregistered route", routeName));
         }
+        log.info("Found Route: {}",routeName);
         return routeToCheck;
     }
 
     private List<Integer> checkForFilters(Route routeToCheck) {
         List<Integer> filtersPerRoute = new ArrayList<>();
+        log.debug("Searching filters in DB...");
         List<FilterToRoute> filterToRouteList = filterToRouteRepository.findAllByRoute_RouteId(routeToCheck.getRouteId());
         if(filterToRouteList != null) {
             for (FilterToRoute filter : filterToRouteList) {
                 filtersPerRoute.add(filter.getFilter().getFilterId());
             }
         }
+        log.debug("Retrieving Filters for route: {}", routeToCheck.getRouteName());
         return filtersPerRoute;
     }
 
     private void runFilter(List<Filter> filterList, RequestEntity<?> request, Route route) {
-        ExecutorService executor = Executors.newFixedThreadPool(5);
+        ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
+        log.debug("Running Filters...");
         for(Filter filter: filterList){
             filter.setRoute(route);
             filter.setRequestEntity(request);
-            executor.execute(filter);
+            //executor.execute(filter);
+            filter.run();
         }
         executor.shutdown();
-        while (!executor.isTerminated()) {
+/*        while (!executor.isTerminated()) {
             try {
-                Thread.sleep(500);
+                Thread.sleep(sleep);
             } catch (InterruptedException e) {
-                //TODO something
+                log.error("Thread interrupted: {}",e.getCause());
             }
-        }
+        }*/
     }
 
 }

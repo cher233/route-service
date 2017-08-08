@@ -1,7 +1,12 @@
 package org.routeservice.filter;
 
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.routeservice.controller.RouteServiceController;
+import org.routeservice.service.PersistenceService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.RequestEntity;
+import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -13,6 +18,7 @@ import java.util.regex.Pattern;
 /**
  * Created by Nofar on 01/08/2017.
  */
+@Slf4j
 public class AuthenticationBypassFilter extends Filter {
 
     public AuthenticationBypassFilter(int filterId) {
@@ -21,6 +27,7 @@ public class AuthenticationBypassFilter extends Filter {
 
     @Override
     public List<String> CheckVulnerability(RequestEntity<?> request) {
+        log.debug("Started checking Authentication Bypass.");
         List<String> vulnerabilities = new ArrayList<>();
             URI uri = Filter.getFullUri(request.getHeaders());
             String path = uri.getRawPath();
@@ -28,8 +35,10 @@ public class AuthenticationBypassFilter extends Filter {
             Matcher matcher = pattern.matcher(path);
             boolean result = matcher.matches();
             if (result) {
+                log.info("Found Authentication Bypass.");
                 vulnerabilities.add(uri.toString());
             }
+        log.debug("Finished checking Authentication Bypass.");
         return vulnerabilities;
     }
 }
