@@ -114,8 +114,8 @@ public class CreateAndRunFilterService {
 
     private HashSet<Integer> convertDefaultFilterToFilterList(){
         HashSet<Integer> setToReturn = new HashSet<>();
-        long amountOfFilters = filterRepository.countByFilterId();
-        for(int i = 1 ; i < amountOfFilters ; i++) setToReturn.add(i);
+        long amountOfFilters = filterRepository.countAllByFilterIdGreaterThan(0);
+        for(int i = 1 ; i <= amountOfFilters ; i++) setToReturn.add(i);
         return setToReturn;
     }
 
