@@ -43,7 +43,7 @@ import java.security.cert.X509Certificate;
 
 
 @SpringBootApplication
-@Profile("cloud")
+//@Profile("cloud")
 public class RouteServiceApplication {
 
     public static void main(String[] args) {

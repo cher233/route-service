@@ -21,19 +21,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.service.spi.InjectService;
 import org.routeservice.controller.RouteServiceController;
 import org.routeservice.entity.Route;
 import org.routeservice.service.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-
-import javax.validation.constraints.Null;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -72,12 +67,11 @@ public abstract class Filter implements Runnable{
 
     @Override
     public final void run() {
-            log.debug("filter Started running...");
+            log.debug("Filter started running...");
             RequestEntity<?> request = requestEntity;
             Route routeToCheck = route;
             List<String> problemsList =  CheckVulnerability(request);
             if(problemsList.isEmpty()) {
-                log.info("no vulnerability found.");
                 return ;
             }
             long date = request.getHeaders().getDate();
@@ -94,7 +88,7 @@ public abstract class Filter implements Runnable{
         try {
             uri  = new URI(url);
             } catch (URISyntaxException e1) {
-            //TODO print log
+            log.error("Invalid uri found as destination!");
         }
         return uri;
     }

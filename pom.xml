@@ -13,15 +13,15 @@
     <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>1.5.2.RELEASE</version>
+    <version>1.5.6.RELEASE</version>
     <relativePath/> <!-- lookup parent from repository -->
 </parent>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <postgres.version>9.4-1201-jdbc41</postgres.version>
-        <openjpa.version>2.4.1</openjpa.version>
+        <postgres.version>42.1.4</postgres.version>
+        <openjpa.version>2.4.2</openjpa.version>
     </properties>
 
     <dependencies>
@@ -32,6 +32,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+            <exclusion>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+            </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -49,7 +55,7 @@
         <dependency>
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>9.1-901.jdbc4</version>
+            <version>9.1-901-1.jdbc4</version>
         </dependency>
 
         <dependency>
@@ -87,6 +93,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <version>2.0.0.M3</version>
             <exclusions>
                 <exclusion>
                     <artifactId>hibernate-entitymanager</artifactId>
@@ -152,20 +159,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.19.1</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>run-tests</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

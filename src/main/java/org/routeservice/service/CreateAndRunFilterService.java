@@ -16,15 +16,13 @@
 
 package org.routeservice.service;
 
-/*import org.cher.entities.FilterEntity;
-import org.cher.entities.FilterToRoute;
-import org.cher.entities.Route;*/
+
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.routeservice.entity.FilterToRoute;
 import org.routeservice.entity.Route;
-import org.routeservice.factory.FilterFactory;
 import org.routeservice.filter.Filter;
+import org.routeservice.repository.FilterRepository;
 import org.routeservice.repository.FilterToRouteRepository;
 import org.routeservice.repository.RouteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +31,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Service;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -54,6 +51,9 @@ public class CreateAndRunFilterService {
     private RouteRepository routeRepository;
 
     @Autowired
+    private FilterRepository filterRepository;
+
+    @Autowired
     private FilterToRouteRepository filterToRouteRepository;
 
     @Value("${threads}")
@@ -70,7 +70,6 @@ public class CreateAndRunFilterService {
         Route routeToRun = extractRoute(request.getHeaders());
         log.info("Extracting filters from DB...");
         HashSet<Integer> filterIndexList = checkForFilters(routeToRun);
-        //List<Filter> filterList = FilterFactory.CreateFilters(filterIndexList);
         log.info("Activating filters...");
         runFilter(filterIndexList, request, routeToRun);
         log.info("Finished validating request.");
@@ -98,17 +97,28 @@ public class CreateAndRunFilterService {
     }
 
     private HashSet<Integer> checkForFilters(Route routeToCheck) {
-        HashSet<Integer> filtersPerRoute = new HashSet<>();
+        HashSet<Integer> filtersPerRoute;
         log.debug("Searching filters in DB...");
         List<FilterToRoute> filterToRouteList = filterToRouteRepository.findAllByRoute_RouteId(routeToCheck.getRouteId());
-        if(filterToRouteList != null) {
+        if(filterToRouteList != null && filterToRouteList.get(0).getFilter().getFilterId()!= 0) {
+            filtersPerRoute = new HashSet<>();
             for (FilterToRoute filter : filterToRouteList) {
                 log.info("Selected filter:{} for route:{}",filter.getFilter().getFilerName(),routeToCheck.getRouteName());
                 filtersPerRoute.add(filter.getFilter().getFilterId());
             }
         }
+        filtersPerRoute = convertDefaultFilterToFilterList();
         log.debug("Retrieving Filters for route: {}", routeToCheck.getRouteName());
         return filtersPerRoute;
+    }
+
+    private HashSet<Integer> convertDefaultFilterToFilterList(){
+        HashSet<Integer> setToReturn = new HashSet<>();
+//        long amountOfFilters = filterRepository.countByFilterId();
+//        for(int i = 1 ; i <= amountOfFilters ; i++) setToReturn.add(i);
+        setToReturn.add(1);
+        setToReturn.add(2);
+        return setToReturn;
     }
 
     private void runFilter(HashSet<Integer> filterIdList, RequestEntity<?> request, Route route) {
@@ -118,18 +128,10 @@ public class CreateAndRunFilterService {
             if(filterIdList.contains(filter.getFilterId())) {
                 filter.setRoute(route);
                 filter.setRequestEntity(request);
-                //executor.execute(filter);
-                filter.run();
+                executor.execute(filter);
             }
         }
         executor.shutdown();
-/*        while (!executor.isTerminated()) {
-            try {
-                Thread.sleep(sleep);
-            } catch (InterruptedException e) {
-                log.error("Thread interrupted: {}",e.getCause());
-            }
-        }*/
     }
 
 }

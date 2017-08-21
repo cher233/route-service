@@ -16,19 +16,14 @@
 
 package org.routeservice.filter;
 
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.routeservice.controller.RouteServiceController;
-import org.routeservice.service.PersistenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
-
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,9 +33,7 @@ import java.util.List;
 public class DirectoryTraversalFilter extends Filter {
 
     @Autowired
-    public DirectoryTraversalFilter() {
-        filterId = 2;
-    }
+    public DirectoryTraversalFilter() { filterId = 1; }
 
     @Override
     public List<String> CheckVulnerability(RequestEntity<?> request) {
@@ -52,8 +45,10 @@ public class DirectoryTraversalFilter extends Filter {
             log.info("Found directory traversal.");
             vulnerabilities.add(uri.toString());
         }
-            log.debug("Finished checking directory traversal.");
-            return vulnerabilities;
+        else
+            log.info("No directory traversal found.");
+        log.debug("Finished checking directory traversal.");
+        return vulnerabilities;
         }
 
     private URI decodeUrl(HttpHeaders httpHeaders){
