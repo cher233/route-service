@@ -16,6 +16,7 @@
 
 package org.routeservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,6 +43,8 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Table(name = "service_instances", schema="route_service")
 public class ServiceInstanceEntity {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -61,5 +64,9 @@ public class ServiceInstanceEntity {
     @NonNull
     @Column(name = "space_guid", nullable = false, length = 36)
     private String spaceGuid;
+
+    @NonNull
+    @Column(name="password", nullable= false, length=60)
+    private String password;
 
 }

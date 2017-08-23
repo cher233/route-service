@@ -18,8 +18,11 @@ package org.routeservice.repository;
 
 import org.routeservice.entity.FilterFindings;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,5 +31,31 @@ import java.util.List;
 @Repository
 public interface FilterFindingsRepository extends JpaRepository<FilterFindings, Integer> {
 
-    List<FilterFindings> findByRoute_RouteName(String name);
+    /* Queries based on route */
+
+    List<FilterFindings> findAllByRoute_RouteNameAndRoute_Service_Id(String name, int serviceId);
+
+    List<FilterFindings> findAllByRoute_RouteNameAndProblemDescription_FilterEntity_FilterIdAndRoute_Service_Id(String route, int filterId, int serviceId);
+
+    @Query("SELECT ff FROM FilterFindings ff where ff.route.service.id = :serviceId and ff.route.routeName = :route and ff.additionalInfo.timeOfProblem between :startDate and :endDate")
+    List<FilterFindings> findAllByRoute_RouteNameAndAdditionalInfo_TimeOfProblem(@Param("serviceId") int serviceId, @Param("route") String route,
+                                                                                 @Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+    @Query("SELECT ff FROM FilterFindings ff where ff.route.service.id = :serviceId and  ff.route.routeName = :route and ff.additionalInfo.timeOfProblem between :startDate and :endDate and ff.problemDescription.filterEntity.filterId = :filterId")
+    List<FilterFindings> findAllByRoute_RouteNameAndAdditionalInfo_TimeOfProblemAndProblemDescription_FilterEntity_FilterId(@Param("serviceId") int serviceId, @Param("route") String route,
+                                                                                 @Param("startDate") Date startDate, @Param("endDate") Date endDate,@Param("filterId") int filterId);
+
+    /* Queries based on space */
+
+    List<FilterFindings> findAllByRoute_Service_SpaceGuidAndRoute_Service_Id(String space, int serviceId);
+
+    List<FilterFindings> findAllByRoute_Service_IdAndRoute_Service_SpaceGuidAndProblemDescription_FilterEntity_FilterId(int serviceID, String space, int filterId);
+
+    @Query("SELECT ff FROM FilterFindings ff where ff.route.service.id = :serviceId and ff.route.service.spaceGuid = :space and ff.additionalInfo.timeOfProblem between :startDate and :endDate")
+    List<FilterFindings> findAllByRoute_Service_IdAndRoute_Service_SpaceGuidAndAdditionalInfo_TimeOfProblem(@Param("serviceId") int serviceId, @Param("space") String space,
+                                                                                                            @Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+    @Query("SELECT ff FROM FilterFindings ff where ff.route.service.id = :serviceId and  ff.route.service.spaceGuid = :space and ff.additionalInfo.timeOfProblem between :startDate and :endDate and ff.problemDescription.filterEntity.filterId = :filterId")
+    List<FilterFindings> findAllByRoute_Service_IdAndRoute_Service_SpaceGuidAndAdditionalInfo_TimeOfProblemAndProblemDescription_FilterEntity_FilterId(@Param("serviceId") int serviceId, @Param("space") String space,
+                                                                                                                                                       @Param("startDate") Date startDate, @Param("endDate") Date endDate,@Param("filterId") int filterId);
 }

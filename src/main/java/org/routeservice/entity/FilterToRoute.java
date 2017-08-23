@@ -16,6 +16,7 @@
 
 package org.routeservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -47,6 +48,7 @@ import javax.persistence.Table;
 @Table(name = "filters_to_route", schema="route_service")
 public class FilterToRoute{
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;

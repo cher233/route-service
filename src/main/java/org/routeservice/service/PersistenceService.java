@@ -18,6 +18,7 @@ package org.routeservice.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.routeservice.entity.*;
+import org.routeservice.filter.Filter;
 import org.routeservice.repository.AdditionalInfoRepository;
 import org.routeservice.repository.FilterFindingsRepository;
 import org.routeservice.repository.FilterRepository;
@@ -68,7 +69,7 @@ public class PersistenceService {
         }
     }
 
-        private FilterFindings createFilterFindings(Route routeToInsert, AdditionalInfo additionalInfo,
+    private FilterFindings createFilterFindings(Route routeToInsert, AdditionalInfo additionalInfo,
                                                     ProblemDescription problemDescription) {
         log.debug("Creating filter findings entity.");
         FilterFindings filterFindings = FilterFindings.builder().
@@ -110,8 +111,35 @@ public class PersistenceService {
         return additionalInfoEntity;
     }
 
-    public List<FilterFindings> getAllProblemsForRoute(String route){
+
+    public List<FilterFindings> GetInformationByRoute(int serviceid, String route, Date startDate,  Date endDate,
+                                                      int filter, int parameters){
+        switch (parameters){
+            case 0:
+                return filterFindingsRepository.findAllByRoute_RouteNameAndRoute_Service_Id(route, serviceid);
+            case 1:
+                return filterFindingsRepository.findAllByRoute_RouteNameAndAdditionalInfo_TimeOfProblem(serviceid, route, startDate, endDate);
+            case 2:
+                return filterFindingsRepository.findAllByRoute_RouteNameAndProblemDescription_FilterEntity_FilterIdAndRoute_Service_Id(route, filter, serviceid);
+            case 3:
+                return filterFindingsRepository.findAllByRoute_RouteNameAndAdditionalInfo_TimeOfProblemAndProblemDescription_FilterEntity_FilterId(serviceid, route, startDate, endDate,filter);
+        }
         return null;
+    }
+
+     public List<FilterFindings> GetInformationBySpace(int serviceid, String space, Date startDate,  Date endDate, int filter,int parameters){
+         switch (parameters){
+             case 0:
+                 return filterFindingsRepository.findAllByRoute_Service_SpaceGuidAndRoute_Service_Id(space,serviceid);
+             case 1:
+                 return filterFindingsRepository.findAllByRoute_Service_IdAndRoute_Service_SpaceGuidAndAdditionalInfo_TimeOfProblem(serviceid,space,startDate,endDate);
+             case 2:
+                 return filterFindingsRepository.findAllByRoute_Service_IdAndRoute_Service_SpaceGuidAndProblemDescription_FilterEntity_FilterId(serviceid,space,filter);
+             case 3:
+                 return filterFindingsRepository.findAllByRoute_Service_IdAndRoute_Service_SpaceGuidAndAdditionalInfo_TimeOfProblemAndProblemDescription_FilterEntity_FilterId(
+                         serviceid,space,startDate,endDate,filter);
+         }
+         return null;
     }
 
 

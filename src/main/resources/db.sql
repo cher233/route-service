@@ -5,7 +5,8 @@ CREATE TABLE route_service.service_instances
   service_id VARCHAR(36) NOT NULL,
   plan_id VARCHAR(36) NOT NULL,
   organization_guid VARCHAR(36) NOT NULL,
-  space_guid VARCHAR(36) NOT NULL
+  space_guid VARCHAR(36) NOT NULL,
+  password VARCHAR(60) NOT NULL
 );
 
 CREATE TABLE route_service.route_info
@@ -57,6 +58,4 @@ CREATE TABLE route_service.filter_findings
 INSERT INTO route_service.filter_Info(filter_id, filter_name) VALUES
   (0, 'default'),
   (1, 'directory_traversal'),
-  (2, 'authentication_bypass'),
-  (3,'sql_injection'),
-  (4,'xss');
+  (2, 'authentication_bypass');

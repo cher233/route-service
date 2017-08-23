@@ -16,6 +16,8 @@
 
 package org.routeservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -45,21 +47,26 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "route_info", schema="route_service")
 public class Route {
+
+    @JsonIgnore
     @Id
     @Column(name = "route_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int routeId;
 
+    @JsonIgnore
     @NonNull
     @Setter
     @OneToOne
     @JoinColumn(name = "service_id", referencedColumnName = "id")
     private ServiceInstanceEntity service;
 
+    @JsonProperty("Bound route")
     @NonNull
     @Column(name = "route_name", nullable = false, length = 225)
     private String routeName;
 
+    @JsonIgnore
     @NonNull
     @Column(name = "binding_id", nullable = false, length = 36)
     private String bindingId;

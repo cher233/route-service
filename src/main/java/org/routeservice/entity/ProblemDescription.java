@@ -16,6 +16,8 @@
 
 package org.routeservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -47,6 +49,7 @@ import javax.persistence.Table;
 @Table(name = "problem_description", schema="route_service")
 public class ProblemDescription {
 
+    @JsonIgnore
     @Id
     @Column(name = "problem_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,6 +61,7 @@ public class ProblemDescription {
     @JoinColumn(name = "filter_id")
     private FilterEntity filterEntity;
 
+    @JsonProperty("Exact Problem")
     @Column(name = "description", nullable = false, length = 2147483647)
     private String description;
 }

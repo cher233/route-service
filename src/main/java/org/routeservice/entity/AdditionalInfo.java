@@ -16,6 +16,9 @@
 
 package org.routeservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -46,18 +49,23 @@ import java.util.Date;
 @Table(name = "additional_info", schema="route_service")
 public class AdditionalInfo {
 
+    @JsonIgnore
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @JsonProperty("Source url")
     @Column(name = "source_url", length = 225)
     private String sourceUrl;
 
+    @JsonProperty("Destination url")
     @Column(name = "destination_url", length = 225)
     private String destinationUrl;
 
 
+    @JsonProperty("Problem occurred on")
+    @JsonFormat(pattern="yyyy-MM-dd KK:mm a")
     @NonNull
     @Column(name = "time_of_problem", nullable = false ,length = 225)
     private Date timeOfProblem;

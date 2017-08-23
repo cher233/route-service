@@ -60,10 +60,6 @@ public class CreateAndRunFilterService {
     @Setter
     private int numberOfThreads;
 
-    @Value("${sleepGeneral}")
-    @Setter
-    private int sleep;
-
     public RequestEntity<?> CreateAndRunFilters(RequestEntity<?> request) {
 
         log.info("Searching for route...");
@@ -103,7 +99,7 @@ public class CreateAndRunFilterService {
         if(filterToRouteList != null && filterToRouteList.get(0).getFilter().getFilterId()!= 0) {
             filtersPerRoute = new HashSet<>();
             for (FilterToRoute filter : filterToRouteList) {
-                log.info("Selected filter:{} for route:{}",filter.getFilter().getFilerName(),routeToCheck.getRouteName());
+                log.info("Selected filter:{} for route:{}",filter.getFilter().getFilterName(),routeToCheck.getRouteName());
                 filtersPerRoute.add(filter.getFilter().getFilterId());
             }
         }

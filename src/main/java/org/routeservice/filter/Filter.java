@@ -55,10 +55,6 @@ public abstract class Filter implements Runnable{
     @Setter
     private Route route;
 
-    @Value("${sleepFilter}")
-    @Setter
-    private int sleep;
-
     public Filter(int id){
         filterId = id;
     }
@@ -71,13 +67,10 @@ public abstract class Filter implements Runnable{
             RequestEntity<?> request = requestEntity;
             Route routeToCheck = route;
             List<String> problemsList =  CheckVulnerability(request);
-            if(problemsList.isEmpty()) {
-                return ;
-            }
+            if(problemsList.isEmpty()) return ;
             long date = request.getHeaders().getDate();
             String origin = request.getHeaders().getOrigin();
             URI fullURI = getFullUri(request.getHeaders());
-            //service = new PersistenceService();
             service.InsertIntoDB(routeToCheck,filterId,problemsList,date,fullURI,origin);
             log.debug("Filter finished running.");
         }

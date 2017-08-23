@@ -82,9 +82,37 @@ public class PersistenceServiceIT {
 
     @Test
     public void testInsertToDB() throws URISyntaxException {
-        enterRoute(enterServiceInstance());
+        ServiceInstanceEntity service = enterServiceInstance();
+        enterRoute(service);
         insert();
-        List<FilterFindings> filterFindings = filterFindingsRepository.findByRoute_RouteName("https://sdfdsf.com");
+        List<FilterFindings> filterFindings = persistenceService.GetInformationByRoute(service.getId(),"https://sdfdsf.com",null,null,0,0);
+        Assert.assertTrue(!filterFindings.isEmpty());
+    }
+
+    @Test
+    public void testGetbyRouteAndfilter() throws URISyntaxException{
+        ServiceInstanceEntity service = enterServiceInstance();
+        enterRoute(service);
+        insert();
+        List<FilterFindings> filterFindings = persistenceService.GetInformationByRoute(service.getId(),"https://sdfdsf.com",null,null,1,2);
+        Assert.assertTrue(!filterFindings.isEmpty());
+    }
+
+    @Test
+    public void testGetbyRouteAndDate()throws URISyntaxException{
+        ServiceInstanceEntity service = enterServiceInstance();
+        enterRoute(service);
+        insert();
+        List<FilterFindings> filterFindings = persistenceService.GetInformationByRoute(service.getId(),"https://sdfdsf.com",new Date(1000),new Date(2000),0,1);
+        Assert.assertTrue(!filterFindings.isEmpty());
+    }
+
+    @Test
+    public void testGetbyRouteAndDateAndFilterId()throws URISyntaxException{
+        ServiceInstanceEntity service = enterServiceInstance();
+        enterRoute(service);
+        insert();
+        List<FilterFindings> filterFindings = persistenceService.GetInformationByRoute(service.getId(),"https://sdfdsf.com",new Date(1000),new Date(2000),1,3);
         Assert.assertTrue(!filterFindings.isEmpty());
     }
 
@@ -103,6 +131,7 @@ public class PersistenceServiceIT {
                 planId("plan").
                 organizationGuid("org").
                 spaceGuid("space").
+                password("pass").
                 build());
     }
 

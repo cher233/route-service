@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ServiceInstanceRepository  extends JpaRepository<ServiceInstanceEntity,Integer>{
+
+    ServiceInstanceEntity findFirstByServiceId(String ServiceId);
 }
