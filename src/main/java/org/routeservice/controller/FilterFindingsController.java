@@ -1,6 +1,6 @@
 package org.routeservice.controller;
 
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import io.swagger.annotations.Api;
 import org.routeservice.entity.FilterFindings;
 import org.routeservice.service.AuthenticationService;
 import org.routeservice.service.PersistenceService;
@@ -8,13 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestOperations;
 import java.util.Date;
 import java.util.List;
 
 @RestController
 @RequestMapping("/finding")
-
+@Api(value="routeService", description="Retrieve information regarding problems found by Route Service")
 public class FilterFindingsController {
     @Autowired
     PersistenceService persistenceService;
