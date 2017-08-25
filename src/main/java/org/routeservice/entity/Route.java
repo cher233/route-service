@@ -61,7 +61,7 @@ public class Route {
     @JoinColumn(name = "service_id", referencedColumnName = "id")
     private ServiceInstanceEntity service;
 
-    @JsonProperty("Bound route")
+    @JsonProperty("Bound_route")
     @NonNull
     @Column(name = "route_name", nullable = false, length = 225)
     private String routeName;

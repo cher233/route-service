@@ -55,16 +55,16 @@ public class AdditionalInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @JsonProperty("Source url")
+    @JsonProperty("Source_url")
     @Column(name = "source_url", length = 225)
     private String sourceUrl;
 
-    @JsonProperty("Destination url")
+    @JsonProperty("Destination_url")
     @Column(name = "destination_url", length = 225)
     private String destinationUrl;
 
 
-    @JsonProperty("Problem occurred on")
+    @JsonProperty("Problem_occurred_on")
     @JsonFormat(pattern="yyyy-MM-dd KK:mm a")
     @NonNull
     @Column(name = "time_of_problem", nullable = false ,length = 225)

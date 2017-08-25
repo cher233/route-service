@@ -16,6 +16,7 @@
 
 package org.routeservice.controller;
 
+import lombok.Getter;
 import org.routeservice.service.CreateAndRunFilterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestOperations;
 
@@ -35,6 +35,7 @@ import java.net.URI;
 public final class RouteServiceController {
 
     @Autowired
+    @Getter
     private CreateAndRunFilterService service;
 
     public static final String FORWARDED_URL = "X-CF-Forwarded-Url";

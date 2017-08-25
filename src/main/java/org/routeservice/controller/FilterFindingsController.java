@@ -1,6 +1,7 @@
 package org.routeservice.controller;
 
 import io.swagger.annotations.Api;
+import lombok.Setter;
 import org.routeservice.entity.FilterFindings;
 import org.routeservice.service.AuthenticationService;
 import org.routeservice.service.PersistenceService;
@@ -16,9 +17,11 @@ import java.util.List;
 @Api(value="routeService", description="Retrieve information regarding problems found by Route Service")
 public class FilterFindingsController {
     @Autowired
+    @Setter
     PersistenceService persistenceService;
 
     @Autowired
+    @Setter
     AuthenticationService authenticationService;
 
     @RequestMapping(value = "/route/{route}", method = RequestMethod.GET , produces="application/json")
@@ -33,7 +36,7 @@ public class FilterFindingsController {
         int serviceId  = authenticationService.Authenticate(serviceGuid, secret);
         if(serviceId == -1) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         int ParametersCheck = checkForNullParameters(startDate, endDate, filter);
-        if(ParametersCheck == -1) return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        if(ParametersCheck == -1) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         route = "https://" + route;
         List<FilterFindings> response = persistenceService.GetInformationByRoute(serviceId, route, startDate, endDate,
                 filter,ParametersCheck);

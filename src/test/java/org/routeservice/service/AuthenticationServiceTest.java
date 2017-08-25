@@ -7,9 +7,7 @@ import org.routeservice.entity.ServiceInstanceEntity;
 import org.routeservice.repository.ServiceInstanceRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockingDetails;
 import static org.mockito.Mockito.when;
 
 public class AuthenticationServiceTest {
