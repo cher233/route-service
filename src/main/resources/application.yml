@@ -44,7 +44,7 @@ spring:
 ---
 spring:
   profiles:
-    active: local
+    active: cloud
 
 security:
   user:

@@ -21,6 +21,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.routeservice.entity.FilterToRoute;
 import org.routeservice.entity.Route;
+import org.routeservice.exception.RouteNotFoundException;
 import org.routeservice.filter.Filter;
 import org.routeservice.repository.FilterRepository;
 import org.routeservice.repository.FilterToRouteRepository;
@@ -45,15 +46,19 @@ import java.util.concurrent.Executors;
 public class CreateAndRunFilterService {
 
     @Autowired
+    @Setter
     List<Filter> filterList;
 
     @Autowired
+    @Setter
     private RouteRepository routeRepository;
 
     @Autowired
+    @Setter
     private FilterRepository filterRepository;
 
     @Autowired
+    @Setter
     private FilterToRouteRepository filterToRouteRepository;
 
     @Value("${threads}")
@@ -78,7 +83,7 @@ public class CreateAndRunFilterService {
         String protocol = uri.getScheme();
         String routeName;
         if(protocol==null){
-            routeName=uri.toString().replaceAll("/.*","");
+            routeName="https://"+uri.toString();
         }
         else{
             routeName = new StringBuilder().append(protocol).append("://").append(uri.getHost()).toString();
@@ -86,13 +91,13 @@ public class CreateAndRunFilterService {
         log.debug("Retrieving route from DB...");
         Route routeToCheck = routeRepository.findFirstByRouteName(routeName);
         if(routeToCheck == null) {
-          throw new IllegalStateException(String.format("unregistered route", routeName));
+          throw new RouteNotFoundException(String.format("unregistered route", routeName));
         }
         log.info("Found Route: {}",routeName);
         return routeToCheck;
     }
 
-    private HashSet<Integer> checkForFilters(Route routeToCheck) {
+    protected HashSet<Integer> checkForFilters(Route routeToCheck) {
         HashSet<Integer> filtersPerRoute;
         log.debug("Searching filters in DB...");
         List<FilterToRoute> filterToRouteList = filterToRouteRepository.findAllByRoute_RouteId(routeToCheck.getRouteId());
@@ -103,19 +108,21 @@ public class CreateAndRunFilterService {
                 filtersPerRoute.add(filter.getFilter().getFilterId());
             }
         }
-        filtersPerRoute = convertDefaultFilterToFilterList();
-        log.debug("Retrieving Filters for route: {}", routeToCheck.getRouteName());
+        else
+            filtersPerRoute = convertDefaultFilterToFilterList();
+        log.debug("Finished retrieving filters for route: {}", routeToCheck.getRouteName());
         return filtersPerRoute;
     }
 
     private HashSet<Integer> convertDefaultFilterToFilterList(){
+        log.info("Generating default filters...");
         HashSet<Integer> setToReturn = new HashSet<>();
         long amountOfFilters = filterRepository.countAllByFilterIdGreaterThan(0);
         for(int i = 1 ; i <= amountOfFilters ; i++) setToReturn.add(i);
         return setToReturn;
     }
 
-    private void runFilter(HashSet<Integer> filterIdList, RequestEntity<?> request, Route route) {
+    protected void runFilter(HashSet<Integer> filterIdList, RequestEntity<?> request, Route route) {
         ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
         log.debug("Running Filters...");
         for(Filter filter: filterList){
