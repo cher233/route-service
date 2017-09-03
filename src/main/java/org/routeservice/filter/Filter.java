@@ -63,13 +63,15 @@ public abstract class Filter implements Runnable{
 
     @Override
     public final void run() {
+            String origin = null;
             log.debug("Filter started running...");
             RequestEntity<?> request = requestEntity;
             Route routeToCheck = route;
             List<String> problemsList =  CheckVulnerability(request);
             if(problemsList.isEmpty()) return ;
             long date = request.getHeaders().getDate();
-            String origin = request.getHeaders().getOrigin();
+            if(request.getHeaders().get("X-Forwarded-For")!= null && !request.getHeaders().get("X-Forwarded-For").isEmpty())
+                 origin = request.getHeaders().get("X-Forwarded-For").get(0);
             URI fullURI = getFullUri(request.getHeaders());
             service.InsertIntoDB(routeToCheck,filterId,problemsList,date,fullURI,origin);
             log.debug("Filter finished running.");

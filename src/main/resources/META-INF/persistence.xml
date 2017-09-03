@@ -10,10 +10,10 @@
         <class> org.routeservice.entity.AdditionalInfo</class>
         <class> org.routeservice.entity.FilterFindings</class>
         <class> org.routeservice.entity.ProblemDescription</class>
-        <class>org.cher.entities.Route</class>
-        <class>org.cher.entities.FilterEntity</class>
-        <class>org.cher.entities.FilterToRoute</class>
-        <class>org.cher.entities.ServiceInstanceEntity</class>
+        <class>org.routeservice.entity.Route</class>
+        <class>org.routeservice.entity.FilterEntity</class>
+        <class>org.routeservice.entity.FilterToRoute</class>
+        <class>org.routeservice.entity.ServiceInstanceEntity</class>
         <properties>
             <property name="openjpa.archive.autodetection" value="class"/>
             <property name="openjpa.Log" value="DefaultLevel=WARN, Tool=WARN, SQL=WARN, Runtime=WARN" />
