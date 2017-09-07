@@ -65,6 +65,10 @@ public class CreateAndRunFilterService {
     @Setter
     private int numberOfThreads;
 
+    @Value("${defaultFilter}")
+    @Setter
+    private int defaultFilter;
+
     public RequestEntity<?> CreateAndRunFilters(RequestEntity<?> request) {
 
         log.info("Searching for route...");
@@ -117,7 +121,7 @@ public class CreateAndRunFilterService {
     private HashSet<Integer> convertDefaultFilterToFilterList(){
         log.info("Generating default filters...");
         HashSet<Integer> setToReturn = new HashSet<>();
-        long amountOfFilters = filterRepository.countAllByFilterIdGreaterThan(0);
+        long amountOfFilters = filterRepository.countAllByFilterIdGreaterThan(defaultFilter);
         for(int i = 1 ; i <= amountOfFilters ; i++) setToReturn.add(i);
         return setToReturn;
     }

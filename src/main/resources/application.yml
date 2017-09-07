@@ -1,4 +1,5 @@
 threads: 5
+defaultFilter: 0
 
 ---
 

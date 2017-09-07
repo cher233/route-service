@@ -41,6 +41,7 @@ public class CreateAndRunFilterServiceTest {
         filterList.add(mock(DirectoryTraversalFilter.class));
         createAndRunFilterService = new CreateAndRunFilterService();
         createAndRunFilterService.setNumberOfThreads(5);
+        createAndRunFilterService.setDefaultFilter(0);
         routeRepository = mock(RouteRepository.class);
         createAndRunFilterService.setRouteRepository(routeRepository);
         filterRepository = mock(FilterRepository.class);
